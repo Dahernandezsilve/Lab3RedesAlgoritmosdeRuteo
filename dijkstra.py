@@ -4,9 +4,7 @@ class Dijkstra:
 
     def find_shortest_path(self, start_node):
         unvisited_nodes = list(self.graph.keys())
-        shortest_path = {}
-        for node in unvisited_nodes:
-            shortest_path[node] = float('inf')
+        shortest_path = {node: float('inf') for node in unvisited_nodes}
         shortest_path[start_node] = 0
 
         while unvisited_nodes:
@@ -15,7 +13,8 @@ class Dijkstra:
             )
             unvisited_nodes.remove(current_node)
 
-            for neighbor, weight in self.graph[current_node].items():
+            for neighbor in self.graph[current_node]:
+                weight = self.graph[current_node][neighbor]  # Asumimos que el peso es 1 si no se especifica
                 tentative_value = shortest_path[current_node] + weight
                 if tentative_value < shortest_path[neighbor]:
                     shortest_path[neighbor] = tentative_value

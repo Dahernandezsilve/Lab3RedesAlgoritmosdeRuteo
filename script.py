@@ -1,21 +1,13 @@
 from linkStateRouting import LinkStateRouting
+from config import NODES
 
-# Definir la topología del grafo (ejemplo)
-graph = {
-    'A': {'B': 1, 'C': 4},
-    'B': {'A': 1, 'C': 2, 'D': 5},
-    'C': {'A': 4, 'B': 2, 'D': 1},
-    'D': {'B': 5, 'C': 1}
-}
+# Crear la instancia del enrutamiento de estado de enlace utilizando NODES
+lsr = LinkStateRouting(NODES)
 
-node_tables = graph  # Esta sería la tabla de los demás nodos
-
-# Crear la instancia del enrutamiento de estado de enlace
-lsr = LinkStateRouting(node_tables)
-
-# Ejecutar Dijkstra
+# Ejecutar Dijkstra para encontrar los caminos más cortos desde 'A'
 shortest_paths = lsr.run_dijkstra('A')
 print("Shortest paths from A:", shortest_paths)
 
-# Ejecutar Flooding
-lsr.run_flooding('A', ['B', 'C', 'D'])
+# Ejecutar Flooding desde 'A' hacia sus vecinos
+neighbors = NODES['A']['neighbors']  # Obtener los vecinos del nodo 'A'
+lsr.run_flooding('A', neighbors)

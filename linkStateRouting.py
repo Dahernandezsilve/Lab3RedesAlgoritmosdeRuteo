@@ -9,6 +9,7 @@ class LinkStateRouting:
         dijkstra = Dijkstra(self.node_tables)
         return dijkstra.find_shortest_path(start_node)
 
-    def run_flooding(self, start_node, neighbors):
+    def run_flooding(self, start_node):
+        neighbors = self.node_tables[start_node]['neighbors']
         flooding = Flooding()
         flooding.flood(start_node, neighbors)
