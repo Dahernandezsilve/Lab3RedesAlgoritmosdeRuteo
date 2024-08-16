@@ -1,23 +1,71 @@
+import socket
+import threading
+import json
+import heapq
+
 class Dijkstra:
-    def __init__(self, graph):
+    def __init__(self, node_id, neighbors, graph):
+        self.node_id = node_id
+        self.neighbors = neighbors
         self.graph = graph
+        self.visited_nodes = set()
+        self.running = True
+        self.distances = {node: float('inf') for node in neighbors}
+        self.distances[self.node_id] = 0
+        self.predecessors = {}
+    
+    def start_node(self):
+        self.listener_thread = threading.Thread(target=self.listen)
+        self.listener_thread.start()
 
-    def find_shortest_path(self, start_node):
-        unvisited_nodes = list(self.graph.keys())
-        shortest_path = {}
-        for node in unvisited_nodes:
-            shortest_path[node] = float('inf')
-        shortest_path[start_node] = 0
+    def listen(self):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+            s.bind((self.neighbors[self.node_id][0],
+                    self.neighbors[self.node_id][1]))
+            s.listen()
+            while self.running:
+                conn, addr = s.accept()
+                with conn:
+                    data = conn.recv(1024)
+                    if data:
+                        message = json.loads(data.decode('utf-8'))
+                        self.handle_message(message)
 
-        while unvisited_nodes:
-            current_node = min(
-                (node for node in unvisited_nodes), key=lambda node: shortest_path[node]
-            )
-            unvisited_nodes.remove(current_node)
+    def send_message(self, target_node, message):
+        if target_node in self.neighbors:
+            ip, port = self.neighbors[target_node]
+            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                s.connect((ip, port))
+                s.sendall(json.dumps(message).encode('utf-8'))
 
-            for neighbor, weight in self.graph[current_node].items():
-                tentative_value = shortest_path[current_node] + weight
-                if tentative_value < shortest_path[neighbor]:
-                    shortest_path[neighbor] = tentative_value
+    def dijkstra(self):
+        pq = [(0, self.node_id)]  # Cola de prioridad con (distancia, nodo)
+        while pq:
+            current_distance, current_node = heapq.heappop(pq)
 
-        return shortest_path
+            if current_distance > self.distances[current_node]:
+                continue
+
+            for neighbor, weight in self.graph.get(current_node, {}).items():
+                distance = current_distance + weight
+
+                if distance < self.distances[neighbor]:
+                    self.distances[neighbor] = distance
+                    self.predecessors[neighbor] = current_node
+                    heapq.heappush(pq, (distance, neighbor))
+        
+        print(f"Node {self.node_id} shortest paths: {self.distances}")
+
+    def handle_message(self, message):
+        if message['payload'] == "STOP":
+            print(f"Node {self.node_id} received STOP message. Stopping...")
+            self.running = False
+            return
+        print(f"Node {self.node_id} received message: {message['payload']}")
+        self.dijkstra()
+
+    def stop_node(self):
+        if self.running:
+            self.running = False
+            self.listener_thread.join()  # Asegura que el hilo de escucha termine
+            print(f"Node {self.node_id} has terminated.")

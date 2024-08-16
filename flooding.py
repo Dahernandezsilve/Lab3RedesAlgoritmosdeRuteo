@@ -31,8 +31,7 @@ class Flooding:
         if message["from"] in self.visited_nodes:
             return
         self.visited_nodes.add(message["from"])
-        print(f"Flooding message from {
-              message['from']} to neighbors of {self.node_id}")
+        print(f"Flooding message from {message['from']} to neighbors of {self.node_id}")
         for neighbor, (ip, port) in self.neighbors.items():
             if neighbor != self.node_id:
                 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
