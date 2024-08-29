@@ -1,5 +1,5 @@
-from dijkstra import Dijkstra
-from flooding import Flooding
+from Client.algorithms.dijkstra import Dijkstra
+from Client.algorithms.flooding import Flooding
 
 class LinkStateRouting:
     def __init__(self, node_tables):

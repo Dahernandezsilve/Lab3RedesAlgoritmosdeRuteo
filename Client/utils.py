@@ -5,7 +5,9 @@ import re
 import xml.etree.ElementTree as ET
 from typing import List
 
-# Archivo con funciones de utilidad para el proyecto
+# Funciones de utilidad para usar en el cliente XMPP
+
+
 # Funciones para convertir entre XML y JSON
 def xml_to_json(xml_string: str) -> str:
     """

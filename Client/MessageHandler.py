@@ -83,13 +83,13 @@ class MessageHandler:
                     body_text = body.text
                     jsonBody = json.loads(body_text)
                     from_attr = from_attr.split('/')[0]
-                    if jsonBody['type'] == 'echo':
+                    if jsonBody['type'] == 'echo': # Protocol: Echo
                         print(f"☁️ Echo message received: {jsonBody['type']}")
                         response = {
                             "type": "echo_response",
                         }
                         self.comm_manager.sendRoutingMessage(from_attr.split('/')[0], json.dumps(response))
-                    if jsonBody['type'] == 'echo_response':
+                    if jsonBody['type'] == 'echo_response': # Protocol: echo_response
                         print(f" Echo response received: {jsonBody['type']}")
                         endTime = time.perf_counter()
                         startTime = self.comm_manager.weightsInitial[from_attr]
@@ -117,7 +117,7 @@ class MessageHandler:
                             user = self.comm_manager.names['config'][neighbor]
                             self.comm_manager.sendRoutingMessage(user, json.dumps(newTable))
 
-                    if jsonBody['type'] == 'send_routing':
+                    if jsonBody['type'] == 'send_routing': # Protocol: send_routing
                         if self.comm_manager.routing_algorithm == 'dijkstra':
                             to = jsonBody['to']
                             for names in self.comm_manager.names['config']:
@@ -177,7 +177,7 @@ class MessageHandler:
                                 print("📩 There are no more hops.")
                         else:
                             print("🚫 Error: Routing algorithm not supported")
-                    if jsonBody['type'] == 'weights':
+                    if jsonBody['type'] == 'weights': # Protocol: weights
                         fromUser = jsonBody['from']
                         version = jsonBody['version']
 

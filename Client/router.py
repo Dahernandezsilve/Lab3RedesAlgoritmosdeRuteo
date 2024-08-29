@@ -5,11 +5,8 @@ from communicationManager import CommunicationManager
 from MessageHandler import MessageHandler
 import sys
 import threading
-from algorithms import dijkstra
-import json
-from time import sleep
 
-async def start_node(node_id: str, password: str, routing_algorithm: str, type_names: str, type_topo: str):
+async def startNode(node_id: str, password: str, routing_algorithm: str, type_names: str, type_topo: str):
     server = 'alumchat.lol'
     port = 5222
 
@@ -57,4 +54,4 @@ if __name__ == "__main__":
     node_id = sys.argv[1]
     password = sys.argv[2]
     routing_algorithm = sys.argv[3]
-    asyncio.run(start_node(node_id, password, routing_algorithm, '../config/names2024-randomX-2024.txt', '../config/topo2024-randomX-2024.txt'))
+    asyncio.run(startNode(node_id, password, routing_algorithm, '../config/names2024-randomX-2024.txt', '../config/topo2024-randomX-2024.txt'))
