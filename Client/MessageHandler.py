@@ -124,6 +124,10 @@ class MessageHandler:
                                 if self.comm_manager.names['config'][names] == to:
                                     to = names
                             path, anotherPath = dijkstra(self.comm_manager.node_id, to, self.comm_manager.table)
+
+                            if path is None:
+                                print("✖️ Error: No hay camino disponible")
+                                return
                             if len(path) < 2:
                                 print("✖️ Error: No hay camino disponible")
                             else:
@@ -186,7 +190,6 @@ class MessageHandler:
                                 fromUser = names
 
                         if version > self.comm_manager.table.get(fromUser,{}).get('version', 0):
-                            
                             self.comm_manager.table[fromUser]= {}
                             self.comm_manager.table[fromUser]['version'] = version
                             self.comm_manager.table[fromUser] = {'table': jsonBody['table']}
@@ -197,8 +200,9 @@ class MessageHandler:
                                 self.comm_manager.sendRoutingMessage(user, json.dumps(jsonBody))
                         headers = ['Neighbor', 'Weight']
                         rows = [(key, value) for key, value in self.comm_manager.table.items()]
-                        print(tabulate(rows, headers=headers, tablefmt='grid'))
-
+                        print(tabulate(rows, headers=headers, tablefmt='rounded_grid'))
+                    if jsonBody['type'] == 'message': # Protocol: message
+                        print(f"📩 Message received from {jsonBody['from']}: {jsonBody['data']}")
 
                     print(f"Chat message body: {body.text}")
                     print(f"Message received from: {from_attr}")

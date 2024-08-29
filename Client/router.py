@@ -6,7 +6,7 @@ from MessageHandler import MessageHandler
 import sys
 import threading
 
-async def startNode(node_id: str, password: str, routing_algorithm: str, type_names: str, type_topo: str):
+async def startNode(node_id: str, password: str, routing_algorithm: str, type_names: str, type_topo: str, sendMessage= False):
     server = 'alumchat.lol'
     port = 5222
 
@@ -23,17 +23,18 @@ async def startNode(node_id: str, password: str, routing_algorithm: str, type_na
         comm_manager = CommunicationManager(account_manager.client, nodeConfig=config, routing_algorithm=routing_algorithm)
         print("🧠🧹",comm_manager.weights)
         message_handler = MessageHandler(account_manager.client, comm_manager)
-        message = {
-            'type': 'send_routing',
-            'to': 'val21240@alumchat.lol',
-            'from': username,
-            'data': 'Hello, this is a routing message.',
-            'hops': len(config.names['config'])
-        }
-        if routing_algorithm == 'flooding':
-            threading.Thread(target=comm_manager.sendRoutingMessageNeighbors, args=(message,)).start()
-        else:
-            threading.Thread(target=comm_manager.sendRoutingMessageDijkstra, args=(message,)).start()
+        if sendMessage:
+            message = {
+                'type': 'send_routing',
+                'to': 'val21240@alumchat.lol',
+                'from': username,
+                'data': 'Hello, this is a routing message.',
+                'hops': len(config.names['config'])
+            }
+            if routing_algorithm == 'flooding':
+                threading.Thread(target=comm_manager.sendRoutingMessageNeighbors, args=(message,)).start()
+            else:
+                threading.Thread(target=comm_manager.sendRoutingMessageDijkstra, args=(message,)).start()
         if comm_manager.routing_algorithm == 'flooding':
             await message_handler.receive_messages()
         else:
@@ -45,13 +46,27 @@ async def startNode(node_id: str, password: str, routing_algorithm: str, type_na
         # Cerrar sesión
         account_manager.logout()
 
+def asyncNode(node_id: str, password: str, routing_algorithm: str, type_names: str, type_topo: str, sendMessage= False):
+    asyncio.run(startNode(node_id, password, routing_algorithm, type_names, type_topo, sendMessage))
+
+
 if __name__ == "__main__":
 
-    if len(sys.argv) != 4:
-        print("Usage: python router.py <node_id> <password> <routing_algorithm>")
-        sys.exit(1)
+    if sys.argv[1] == 'true':
+        threads = []
+        threads.append(threading.Thread(target=asyncNode, args=('G', 'ines130602', sys.argv[2], '../config/names2024-randomX-2024.txt', '../config/topo2024-randomX-2024.txt')))
+        threads.append(threading.Thread(target=asyncNode, args=('B', '1234', sys.argv[2], '../config/names2024-randomX-2024.txt', '../config/topo2024-randomX-2024.txt')))
+        threads.append(threading.Thread(target=asyncNode, args=('D', '1234', sys.argv[2], '../config/names2024-randomX-2024.txt', '../config/topo2024-randomX-2024.txt')))
+        threads.append(threading.Thread(target=asyncNode, args=('F', '1234', sys.argv[2], '../config/names2024-randomX-2024.txt', '../config/topo2024-randomX-2024.txt')))
 
-    node_id = sys.argv[1]
-    password = sys.argv[2]
-    routing_algorithm = sys.argv[3]
-    asyncio.run(startNode(node_id, password, routing_algorithm, '../config/names2024-randomX-2024.txt', '../config/topo2024-randomX-2024.txt'))
+        for thread in threads:
+            thread.start()
+
+        for thread in threads:
+            thread.join()
+
+    else:
+        node_id = sys.argv[1]
+        password = sys.argv[2]
+        routing_algorithm = sys.argv[3]    
+        asyncio.run(startNode(node_id, password, routing_algorithm, '../config/names2024-randomX-2024.txt', '../config/topo2024-randomX-2024.txt', False))

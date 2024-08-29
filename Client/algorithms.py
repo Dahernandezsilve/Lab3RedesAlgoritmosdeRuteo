@@ -12,9 +12,10 @@ def dijkstra(start_node, end_node, table):
         current_distance, current_node = heapq.heappop(priority_queue)
         if current_node == end_node:
             break
-        if current_distance > shortest_paths[current_node]:
+
+        if current_distance > shortest_paths.get(current_node, float('inf')):
             continue
-        for neighbor, weight in table[current_node]['table'].items():
+        for neighbor, weight in table.get(current_node, {}).get('table',{}).items():
             distance = current_distance + weight
             if distance < shortest_paths[neighbor]:
                 shortest_paths[neighbor] = distance
@@ -25,9 +26,9 @@ def dijkstra(start_node, end_node, table):
     current_node = end_node
     while current_node is not None:
         path.insert(0, current_node)
-        current_node = predecessors[current_node]
+        current_node = predecessors.get(current_node, None)
 
-    if shortest_paths[end_node] == float('inf'):
+    if shortest_paths.get(end_node, float('inf')) == float('inf'):
         return None, float('inf')
     
     return path, shortest_paths[end_node]
