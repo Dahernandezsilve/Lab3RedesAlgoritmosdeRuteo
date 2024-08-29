@@ -4,7 +4,7 @@ import json
 import heapq
 
 class Dijkstra:
-    def __init__(self, node_id, neighbors, graph):
+    def __init__(self, node_id, neighbors, graph, weights):
         self.node_id = node_id
         self.neighbors = neighbors
         self.graph = graph
@@ -69,3 +69,4 @@ class Dijkstra:
             self.running = False
             self.listener_thread.join()  # Asegura que el hilo de escucha termine
             print(f"Node {self.node_id} has terminated.")
+

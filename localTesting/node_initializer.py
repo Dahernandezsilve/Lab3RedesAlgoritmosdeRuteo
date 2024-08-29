@@ -1,4 +1,4 @@
-from flooding import Flooding
+from algorithms.flooding import Flooding
 import threading
 import time
 

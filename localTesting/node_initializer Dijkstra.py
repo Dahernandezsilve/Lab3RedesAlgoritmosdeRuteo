@@ -1,4 +1,4 @@
-from dijkstra import Dijkstra
+from algorithms.dijkstra import Dijkstra
 import threading
 import time
 

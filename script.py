@@ -1,4 +1,4 @@
-from linkStateRouting import LinkStateRouting
+from algorithms.linkStateRouting import LinkStateRouting
 
 # Definir la topología del grafo (ejemplo)
 graph = {
