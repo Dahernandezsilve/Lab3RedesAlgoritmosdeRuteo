@@ -69,4 +69,4 @@ if __name__ == "__main__":
         node_id = sys.argv[1]
         password = sys.argv[2]
         routing_algorithm = sys.argv[3]    
-        asyncio.run(startNode(node_id, password, routing_algorithm, '../config/names2024-ConjuntoA-2024.txt.txt', '../config/topo2024-ConjuntoA-2024.txt', True))
+        asyncio.run(startNode(node_id, password, routing_algorithm, '../config/names2024-ConjuntoA-2024.txt', '../config/topo2024-ConjuntoA-2024.txt', True))
