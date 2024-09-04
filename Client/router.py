@@ -54,10 +54,10 @@ if __name__ == "__main__":
 
     if sys.argv[1] == 'true':
         threads = []
-        threads.append(threading.Thread(target=asyncNode, args=('G', 'ines130602', sys.argv[2], '../config/names2024-randomX-2024.txt', '../config/topo2024-randomX-2024.txt')))
-        threads.append(threading.Thread(target=asyncNode, args=('B', '1234', sys.argv[2], '../config/names2024-randomX-2024.txt', '../config/topo2024-randomX-2024.txt')))
-        threads.append(threading.Thread(target=asyncNode, args=('D', '1234', sys.argv[2], '../config/names2024-randomX-2024.txt', '../config/topo2024-randomX-2024.txt')))
-        threads.append(threading.Thread(target=asyncNode, args=('F', '1234', sys.argv[2], '../config/names2024-randomX-2024.txt', '../config/topo2024-randomX-2024.txt')))
+        threads.append(threading.Thread(target=asyncNode, args=('B', 'ines130602', sys.argv[2], '../config/names2024-ConjuntoA-2024.txt', '../config/topo2024-ConjuntoA-2024.txt')))
+        threads.append(threading.Thread(target=asyncNode, args=('C', '123', sys.argv[2], '../config/names2024-ConjuntoA-2024.txt', '../config/topo2024-ConjuntoA-2024.txt')))
+        #threads.append(threading.Thread(target=asyncNode, args=('A', '1234', sys.argv[2], '../config/names2024-randomX-2024.txt', '../config/topo2024-randomX-2024.txt')))
+        #threads.append(threading.Thread(target=asyncNode, args=('E', '1234', sys.argv[2], '../config/names2024-randomX-2024.txt', '../config/topo2024-randomX-2024.txt')))
 
         for thread in threads:
             thread.start()
@@ -69,4 +69,4 @@ if __name__ == "__main__":
         node_id = sys.argv[1]
         password = sys.argv[2]
         routing_algorithm = sys.argv[3]    
-        asyncio.run(startNode(node_id, password, routing_algorithm, '../config/names2024-randomX-2024.txt', '../config/topo2024-randomX-2024.txt', False))
+        asyncio.run(startNode(node_id, password, routing_algorithm, '../config/names2024-ConjuntoA-2024.txt.txt', '../config/topo2024-ConjuntoA-2024.txt', True))

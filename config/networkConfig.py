@@ -20,12 +20,12 @@
 import numpy as np
 import string, random, traceback, argparse, math
 
-_EXAMPLE = ["foo", "bar", "yeet", "lol", "woot", "omg", "swag"]
+_EXAMPLE = ["her21270-search", "auy201579", "jim21169", "gon21438-test42", "her21270-test1"]
 VER = "2024"
 TLD = ".lol"
 
 # Para pruebas
-G0 = ["socrates@alumchat"+TLD,"aristoteles@alumchat"+TLD,"mnovella@alumchat"+TLD,"platon@alumchat"+TLD,"tales@alumchat"+TLD]
+G0 = ["her21270-search@alumchat.lol"+TLD,"auy201579@alumchat.lol"+TLD,"jim21169@alumchat.lol"+TLD,"gon21438-test42@alumchat.lol"+TLD,"her21270-test1@alumchat.lol"+TLD]
 
 
 TEST = []
