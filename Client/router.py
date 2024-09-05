@@ -6,25 +6,76 @@ from MessageHandler import MessageHandler
 import sys
 import threading
 import tkinter as tk
-from tkinter import simpledialog
+from tkinter import ttk
+
+# Variable global para controlar el ciclo de mensajes
+running = True
+
+# Función para mostrar una ventana de entrada personalizada con tkinter
 
 
-# Función para mostrar una ventana de entrada con tkinter
 def ask_for_message():
+    def send_message():
+        nonlocal recipient, message
+        recipient = recipient_entry.get()
+        message = message_entry.get(
+            "1.0", tk.END).strip()  # Obtener texto completo
+        root.quit()  # Cerrar ventana al hacer clic en Enviar
+
+    recipient = None
+    message = None
+
     root = tk.Tk()
-    root.withdraw()  # Oculta la ventana principal
+    root.title("Enviar mensaje")
+    root.geometry("400x200")
+    root.configure(bg="#F0F0F0")
 
-    recipient = simpledialog.askstring(
-        "Recipient", "Escribe la dirección del destinatario (e.g., user@server.lol):")
-    message = simpledialog.askstring(
-        "Message", "Escribe el mensaje que deseas enviar:")
+    # Etiquetas y entradas
+    ttk.Label(root, text="Destinatario:", font=("Arial", 12)).pack(pady=10)
+    recipient_entry = ttk.Entry(root, width=40)
+    recipient_entry.pack(pady=5)
 
-    root.destroy()  # Cierra la ventana
+    ttk.Label(root, text="Mensaje:", font=("Arial", 12)).pack(pady=10)
+    message_entry = tk.Text(root, width=40, height=5)
+    message_entry.pack(pady=5)
+
+    # Botón de enviar
+    send_button = ttk.Button(root, text="Enviar", command=send_message)
+    send_button.pack(pady=10)
+
+    root.mainloop()
+    root.destroy()  # Cierra la ventana después de obtener los datos
 
     return recipient, message
 
+# Función para enviar mensajes en un bucle continuo
+
+
+def message_sender(comm_manager, username, routing_algorithm,  type_names, type_topo):
+    global running
+    config = NodeConfig(type_names, type_topo)
+    config.set_node(node_id)
+    while running:
+        recipient, user_input = ask_for_message()
+        if recipient and user_input:
+            message = {
+                'type': 'send_routing',
+                'to': recipient,
+                'from': username,
+                'data': user_input,
+                'hops': len(config.names['config'])
+            }
+
+            if routing_algorithm == 'flooding':
+                threading.Thread(
+                    target=comm_manager.sendRoutingMessageNeighbors, args=(message,)).start()
+            else:
+                threading.Thread(
+                    target=comm_manager.sendRoutingMessageDijkstra, args=(message,)).start()
+
 
 async def startNode(node_id: str, password: str, routing_algorithm: str, type_names: str, type_topo: str, sendMessage=False):
+    global running
     server = 'alumchat.lol'
     port = 5222
 
@@ -43,31 +94,24 @@ async def startNode(node_id: str, password: str, routing_algorithm: str, type_na
         print("🧠🧹", comm_manager.weights)
         message_handler = MessageHandler(account_manager.client, comm_manager)
 
-        if sendMessage:
-            recipient, user_input = ask_for_message()
-            if recipient and user_input:  # Verifica que no sean None
-                message = {
-                    'type': 'send_routing',
-                    'to': recipient,
-                    'from': username,
-                    'data': user_input,
-                    'hops': len(config.names['config'])
-                }
-                if routing_algorithm == 'flooding':
-                    threading.Thread(
-                        target=comm_manager.sendRoutingMessageNeighbors, args=(message,)).start()
-                else:
-                    threading.Thread(
-                        target=comm_manager.sendRoutingMessageDijkstra, args=(message,)).start()
+        # Si se ha seleccionado 'flooding', mostrar la ventana de mensajes
+        if routing_algorithm == 'flooding' and sendMessage:
+            threading.Thread(target=message_sender, args=(
+                comm_manager, username, routing_algorithm, type_names, type_topo)).start()
 
+        # Continuar recibiendo mensajes
         if comm_manager.routing_algorithm == 'flooding':
             await message_handler.receive_messages()
         else:
-            comm_manager.sendEcho()
+            comm_manager.sendEcho()  # Para 'dijkstra' se ejecuta este mensaje de eco
             await message_handler.receive_messages()
+
     except Exception as e:
         print(f"Error: {e}")
     finally:
+        # Detener el ciclo de mensajes
+        running = False
+
         # Cerrar sesión
         account_manager.logout()
 
@@ -80,13 +124,12 @@ def asyncNode(node_id: str, password: str, routing_algorithm: str, type_names: s
 if __name__ == "__main__":
 
     if sys.argv[1] == 'true':
+
         threads = []
         threads.append(threading.Thread(target=asyncNode, args=(
-            'B', 'ines130602', sys.argv[2], '../config/names2024-Conjunto1-9-4-2024.txt', '../config/topo2024-Conjunto1-9-4-2024.txt')))
+            'C', 'ines130602', sys.argv[2], '../config/names2024-Conjunto1-9-4-2024.txt', '../config/topo2024-Conjunto1-9-4-2024.txt')))
         threads.append(threading.Thread(target=asyncNode, args=(
-            'C', '123', sys.argv[2], '../config/names2024-Conjunto1-9-4-2024.txt', '../config/topo2024-Conjunto1-9-4-2024.txt')))
-        # threads.append(threading.Thread(target=asyncNode, args=('A', '1234', sys.argv[2], '../config/names2024-randomX-2024.txt', '../config/topo2024-randomX-2024.txt')))
-        # threads.append(threading.Thread(target=asyncNode, args=('E', '1234', sys.argv[2], '../config/names2024-randomX-2024.txt', '../config/topo2024-randomX-2024.txt')))
+            'F', '123', sys.argv[2], '../config/names2024-Conjunto1-9-4-2024.txt', '../config/topo2024-Conjunto1-9-4-2024.txt')))
 
         for thread in threads:
             thread.start()
@@ -95,6 +138,7 @@ if __name__ == "__main__":
             thread.join()
 
     else:
+
         node_id = sys.argv[1]
         password = sys.argv[2]
         routing_algorithm = sys.argv[3]
