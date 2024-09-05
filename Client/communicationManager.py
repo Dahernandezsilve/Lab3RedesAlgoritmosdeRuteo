@@ -30,12 +30,14 @@ class CommunicationManager:
 
 
     def sendEcho(self):
-        print("🧠",self.neighbors)
-        for neighbor in self.neighbors:
-            user = self.names['config'][neighbor]
-            start = time.perf_counter()
-            self.weightsInitial[user] = start
-            self.sendRoutingMessage(user, json.dumps({"type": "echo"}))
+        while True:
+            sleep(20)
+            print("🧠",self.neighbors)
+            for neighbor in self.neighbors:
+                user = self.names['config'][neighbor]
+                start = time.perf_counter()
+                self.weightsInitial[user] = start
+                self.sendRoutingMessage(user, json.dumps({"type": "echo"}))
 
 
 

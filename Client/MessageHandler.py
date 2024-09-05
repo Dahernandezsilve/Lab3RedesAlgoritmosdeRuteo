@@ -124,6 +124,7 @@ class MessageHandler:
                                 for neighbor in self.comm_manager.topology[node]:
                                     if neighbor not in graph[node]:
                                         graph[node][neighbor] = float('inf') 
+                            
                             path, anotherPath = dijkstra(self.comm_manager.node_id, to, graph)
 
                             if path is None:

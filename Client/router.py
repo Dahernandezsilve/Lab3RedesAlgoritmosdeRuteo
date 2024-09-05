@@ -120,15 +120,14 @@ async def startNode(node_id: str, password: str, routing_algorithm: str, type_na
         print("🧠🧹", comm_manager.weights)
         message_handler = MessageHandler(account_manager.client, comm_manager)
 
-        # Si se ha seleccionado 'flooding', mostrar la ventana de mensajes
-        if routing_algorithm == 'flooding' or routing_algorithm =='dijkstra' and sendMessage:
-            threading.Thread(target=message_sender, args=(
-                comm_manager, username, routing_algorithm, type_names, type_topo)).start()
-            
-
         # Continuar recibiendo mensajes
-        if comm_manager.routing_algorithm == 'dijkstra':
-            comm_manager.sendEcho()  # Para 'dijkstra' se ejecuta este mensaje de echo
+        # Si se ha seleccionado 'flooding', mostrar la ventana de mensajes
+        threading.Thread(target=message_sender, args=(comm_manager, username, routing_algorithm, type_names, type_topo)).start()
+
+        print("🧠ECHOTHREAD", comm_manager.weights)
+        print("🧠ECHOTHREAD", routing_algorithm)
+        if routing_algorithm == 'dijkstra':
+            threading.Thread(target=comm_manager.sendEcho).start()
         await message_handler.receive_messages()
 
     except Exception as e:
