@@ -25,13 +25,6 @@ class MessageHandler:
     async def receive_messages(self):
         while True:
             try:
-                if self.client.bufferMessagesToClean:
-                    # Procesar mensajes almacenados en bufferMessagesToClean
-                    for buffered_message in self.client.bufferMessagesToClean:
-                        await self.message_queue.put(buffered_message)
-                    self.client.bufferMessagesToClean.clear()
-
-                # Recibir nuevo mensaje
                 message = await asyncio.to_thread(self.client.receive)
 
                 if message:
@@ -118,12 +111,20 @@ class MessageHandler:
                             self.comm_manager.sendRoutingMessage(user, json.dumps(newTable))
 
                     if jsonBody['type'] == 'send_routing': # Protocol: send_routing
+                        print(jsonBody)
                         if self.comm_manager.routing_algorithm == 'dijkstra':
                             to = jsonBody['to']
                             for names in self.comm_manager.names['config']:
                                 if self.comm_manager.names['config'][names] == to:
                                     to = names
-                            path, anotherPath = dijkstra(self.comm_manager.node_id, to, self.comm_manager.table)
+                            graph = self.comm_manager.table.copy()
+                            for node in self.comm_manager.topology:
+                                if node not in graph:
+                                    graph[node] = {}
+                                for neighbor in self.comm_manager.topology[node]:
+                                    if neighbor not in graph[node]:
+                                        graph[node][neighbor] = float('inf') 
+                            path, anotherPath = dijkstra(self.comm_manager.node_id, to, graph)
 
                             if path is None:
                                 print("✖️ Error: No hay camino disponible")

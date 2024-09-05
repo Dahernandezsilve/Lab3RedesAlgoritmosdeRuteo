@@ -20,7 +20,8 @@
 import numpy as np
 import string, random, traceback, argparse, math
 
-_EXAMPLE = ["her21270-search", "auy201579", "jim21169", "gon21438-test42", "her21270-test1"]
+#_EXAMPLE = ["her21270-search", "auy201579", "jim21169", "gon21438-test42", "her21270-test1"]
+_EXAMPLE = ["her21270", "val21240", "sol21212"]
 VER = "2024"
 TLD = ".lol"
 

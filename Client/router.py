@@ -7,6 +7,7 @@ import sys
 import threading
 import tkinter as tk
 from tkinter import ttk
+import json 
 
 # Variable global para controlar el ciclo de mensajes
 running = True
@@ -27,7 +28,7 @@ def ask_for_message():
 
     root = tk.Tk()
     root.title("Enviar mensaje")
-    root.geometry("400x200")
+    root.geometry("400x300")
     root.configure(bg="#F0F0F0")
 
     # Etiquetas y entradas
@@ -57,21 +58,46 @@ def message_sender(comm_manager, username, routing_algorithm,  type_names, type_
     config.set_node(node_id)
     while running:
         recipient, user_input = ask_for_message()
+        for user in config.names['config']:
+            if config.names['config'][user] == recipient:
+                recipient = user
+        
+        print("💻💻💻💻",recipient)
+        recipient = config.names['config'][recipient]
         if recipient and user_input:
-            message = {
-                'type': 'send_routing',
-                'to': recipient,
-                'from': username,
-                'data': user_input,
-                'hops': len(config.names['config'])
-            }
-
-            if routing_algorithm == 'flooding':
-                threading.Thread(
-                    target=comm_manager.sendRoutingMessageNeighbors, args=(message,)).start()
-            else:
-                threading.Thread(
-                    target=comm_manager.sendRoutingMessageDijkstra, args=(message,)).start()
+            direct = False
+            for neighbor in config.neighbors:
+                user = config.names['config'][neighbor]
+                if user == recipient:
+                    print("📨 Enviando mensaje directo a", recipient)
+                    message = {
+                        "type": "message",
+                        "from": username,
+                        "to": recipient,
+                        "data": user_input,
+                    }
+                    if routing_algorithm == 'flooding':
+                        threading.Thread(
+                            target=comm_manager.sendRoutingMessageNeighbors, args=(message,)).start()
+                    else:
+                        threading.Thread(
+                            target=comm_manager.sendRoutingMessage, args=(recipient, json.dumps(message),)).start()
+                    direct = True
+                    break    
+            if direct == False:
+                message = {
+                    'type': 'send_routing',
+                    'to': recipient,
+                    'from': username,
+                    'data': user_input,
+                    'hops': len(config.names['config'])
+                }
+                if routing_algorithm == 'flooding':
+                    threading.Thread(
+                        target=comm_manager.sendRoutingMessageNeighbors, args=(message,)).start()
+                else:
+                    threading.Thread(
+                        target=comm_manager.sendRoutingMessageDijkstra, args=(message,)).start()
 
 
 async def startNode(node_id: str, password: str, routing_algorithm: str, type_names: str, type_topo: str, sendMessage=False):
@@ -95,16 +121,15 @@ async def startNode(node_id: str, password: str, routing_algorithm: str, type_na
         message_handler = MessageHandler(account_manager.client, comm_manager)
 
         # Si se ha seleccionado 'flooding', mostrar la ventana de mensajes
-        if routing_algorithm == 'flooding' and sendMessage:
+        if routing_algorithm == 'flooding' or routing_algorithm =='dijkstra' and sendMessage:
             threading.Thread(target=message_sender, args=(
                 comm_manager, username, routing_algorithm, type_names, type_topo)).start()
+            
 
         # Continuar recibiendo mensajes
-        if comm_manager.routing_algorithm == 'flooding':
-            await message_handler.receive_messages()
-        else:
-            comm_manager.sendEcho()  # Para 'dijkstra' se ejecuta este mensaje de eco
-            await message_handler.receive_messages()
+        if comm_manager.routing_algorithm == 'dijkstra':
+            comm_manager.sendEcho()  # Para 'dijkstra' se ejecuta este mensaje de echo
+        await message_handler.receive_messages()
 
     except Exception as e:
         print(f"Error: {e}")
@@ -143,4 +168,4 @@ if __name__ == "__main__":
         password = sys.argv[2]
         routing_algorithm = sys.argv[3]
         asyncio.run(startNode(node_id, password, routing_algorithm,
-                    '../config/names2024-Conjunto1-9-4-2024.txt', '../config/topo2024-Conjunto1-9-4-2024.txt', True))
+                    '../config/names2024-randomX-2024.txt', '../config/topo2024-randomX-2024.txt', True))

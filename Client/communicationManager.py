@@ -52,13 +52,23 @@ class CommunicationManager:
 
 
     def sendRoutingMessageDijkstra(self, jsonS):
-        sleep(20)
         print("🧠 🚗Messsage")
         to = jsonS['to']
         for names in self.names['config']:
             if self.names['config'][names] == to:
-                to = names
-        path, timeShortestPath = dijkstra(self.node_id, to, self.table)
+                to = names                
+        graph = self.table.copy()
+        for node in self.topology:
+            if node not in graph:
+                graph[node] = {}
+            for neighbor in self.topology[node]:
+                if neighbor not in graph[node]:
+                    graph[node][neighbor] = float('inf') 
+        path, timeShortestPath = dijkstra(self.node_id, to, graph)
+
+        if path is None:
+            print("✖️ Error: No hay camino disponible")
+            return
         if len(path) < 2:
             print("✖️ Error: No hay camino disponible")
         else:
@@ -88,8 +98,20 @@ class CommunicationManager:
                     self.sendRoutingMessage(nextUser, json.dumps(response))
 
     def sendRoutingMessageNeighbors(self, json):
+        to = json['to']
+        jsonS = json['from']
+        toUser = json['to']
+        data = json['data']
         for neighbor in self.neighbors:
             user = self.names['config'][neighbor]
+            if user == to:
+                response = {
+                    "type": "message",
+                    "from": jsonS['from'],
+                    "to": toUser,
+                    "data": jsonS['data'],
+                }
+                self.sendRoutingMessage(user, json.dunps(response))
             self.sendRoutingMessage(user, json)
 
 
