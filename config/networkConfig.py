@@ -26,7 +26,8 @@ VER = "2024"
 TLD = ".lol"
 
 # Para pruebas
-G0 = ["her21270@alumchat.lol"+TLD,"val21240@alumchat.lol"+TLD,"sol21212@alumchat.lol"+TLD,"mor21762-lab3-1@alumchat.lol"+TLD]
+#G0 = ["her21270@alumchat.lol"+TLD,"val21240@alumchat.lol"+TLD,"sol21212@alumchat.lol"+TLD,"mor21762-lab3-1@alumchat.lol"+TLD]
+G0 = ["her21270@alumchat.lol"+TLD,"auy201579@alumchat.lol"+TLD,"jim21169@alumchat.lol"+TLD]
 
 
 TEST = []
