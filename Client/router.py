@@ -86,11 +86,11 @@ def message_sender(comm_manager, username, routing_algorithm,  type_names, type_
                     break    
             if direct == False:
                 message = {
-                    'type': 'send_routing',
-                    'to': recipient,
-                    'from': username,
-                    'data': user_input,
-                    'hops': len(config.names['config'])
+                    "type": "send_routing",
+                    "to": recipient,
+                    "from": username,
+                    "data": user_input,
+                    "hops": len(config.names['config'])
                 }
                 if routing_algorithm == 'flooding':
                     threading.Thread(
@@ -167,4 +167,4 @@ if __name__ == "__main__":
         password = sys.argv[2]
         routing_algorithm = sys.argv[3]
         asyncio.run(startNode(node_id, password, routing_algorithm,
-                    '../config/names2024-randomX-2024.txt', '../config/topo2024-randomX-2024.txt', True))
+                    '../config/names2024-migrupo-random-2024.txt', '../config/topo2024-migrupo-randomX-2024.txt', True))

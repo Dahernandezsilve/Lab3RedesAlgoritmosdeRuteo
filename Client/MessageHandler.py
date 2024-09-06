@@ -67,14 +67,18 @@ class MessageHandler:
         print(f"Processing chat message: {message}")
         try:
             messages = split_xml_messages(message)
+            print(f"Processing {len(messages)} chat messages")
             for messag in messages:
                 root = ET.fromstring(messag)
                 # Buscar el elemento <body> sin importar el espacio de nombres
                 body = root.find(".//body")
                 from_attr = root.attrib.get('from', 'unknown')
+                print(f"Processing chat message from: {from_attr}")
                 if body is not None:
                     body_text = body.text
+                    print(f"Processing chat message body: {body_text}")
                     jsonBody = json.loads(body_text)
+                    print("📩 json body", jsonBody)
                     from_attr = from_attr.split('/')[0]
                     if jsonBody['type'] == 'echo': # Protocol: Echo
                         print(f"☁️ Echo message received: {jsonBody['type']}")

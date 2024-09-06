@@ -99,22 +99,22 @@ class CommunicationManager:
 
                     self.sendRoutingMessage(nextUser, json.dumps(response))
 
-    def sendRoutingMessageNeighbors(self, json):
-        to = json['to']
-        jsonS = json['from']
-        toUser = json['to']
-        data = json['data']
+    def sendRoutingMessageNeighbors(self, jsonS):
+        to = jsonS["to"]
+        jsonFrom = jsonS["from"]
+        toUser = jsonS["to"]
+        data = jsonS["data"]
         for neighbor in self.neighbors:
             user = self.names['config'][neighbor]
             if user == to:
                 response = {
                     "type": "message",
-                    "from": jsonS['from'],
+                    "from": jsonFrom,
                     "to": toUser,
-                    "data": jsonS['data'],
+                    "data": data,
                 }
-                self.sendRoutingMessage(user, json.dunps(response))
-            self.sendRoutingMessage(user, json)
+                self.sendRoutingMessage(user, json.dumps(response))
+            self.sendRoutingMessage(user, json.dumps(jsonS))
 
 
     # Método para enviar un mensaje
