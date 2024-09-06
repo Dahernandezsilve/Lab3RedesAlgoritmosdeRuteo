@@ -1,0 +1,1 @@
+{"type":"names", "config":{'A': 'auy201579@alumchat.lol', 'B': 'her21270@alumchat.lol', 'C': 'jim21169@alumchat.lol'} }

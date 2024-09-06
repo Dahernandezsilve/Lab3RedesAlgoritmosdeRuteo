@@ -27,7 +27,8 @@ TLD = ".lol"
 
 # Para pruebas
 #G0 = ["her21270@alumchat.lol"+TLD,"val21240@alumchat.lol"+TLD,"sol21212@alumchat.lol"+TLD,"mor21762-lab3-1@alumchat.lol"+TLD]
-G0 = ["her21270@alumchat.lol"+TLD,"auy201579@alumchat.lol"+TLD,"jim21169@alumchat.lol"+TLD]
+#G0 = ["her21270@alumchat.lol"+TLD,"auy201579@alumchat.lol"+TLD,"jim21169@alumchat.lol"+TLD]
+G0 = ["her21270@alumchat.lol"+TLD,"auy201579@alumchat.lol"+TLD,"jim21169@alumchat.lol"+TLD, "mor21762@alumchat.lol"+TLD, "zam21780@alumchat.lol"+TLD, "kie21581@alumchat.lol"+TLD, "gue21781@alumchat.lol"+TLD,  "val21240@alumchat.lol"+TLD, "sol21212@alumchat.lol"+TLD ]
 
 
 TEST = []
